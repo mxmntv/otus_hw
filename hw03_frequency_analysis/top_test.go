@@ -80,3 +80,35 @@ func TestTop10(t *testing.T) {
 		}
 	})
 }
+
+func TestFinder(t *testing.T) {
+	data := []*Entity{
+		{
+			Name:  "A",
+			Count: 1,
+		},
+		{
+			Name:  "B",
+			Count: 1,
+		},
+		{
+			Name:  "C",
+			Count: 1,
+		},
+	}
+	t.Run("lexigraphic sorting", func(t *testing.T) {
+		expected := []string{
+			"A",
+			"B",
+			"C",
+		}
+		require.Equal(t, expected, ResultSlice(data))
+	})
+	t.Run("count +1 positive", func(t *testing.T) {
+		require.True(t, true, Finder(data, "A"))
+		require.Equal(t, 2, data[0].Count)
+	})
+	t.Run("count +1 negative", func(t *testing.T) {
+		require.False(t, false, Finder(data, "D"))
+	})
+}
