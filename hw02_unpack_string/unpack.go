@@ -2,7 +2,6 @@ package hw02unpackstring
 
 import (
 	"errors"
-	"strconv"
 	"strings"
 	"unicode"
 )
@@ -20,40 +19,26 @@ func checkNum(s string) error {
 	return nil
 }
 
-func repeater(s rune, n int) string {
-	if s == 10 {
-		return strings.Repeat(`\n`, n)
-	}
-	return strings.Repeat(string(s), n-1)
-}
-
 func Unpack(s string) (string, error) {
 	if err := checkNum(s); err != nil {
 		return "", err
 	}
-	var prev rune
 	var sb strings.Builder
+	par := make([]rune, 0)
 	for _, v := range s {
-		if prev != 0 && unicode.IsDigit(v) {
-			i, err := strconv.Atoi(string(v))
-			if err != nil {
-				return "", err
-			}
-			if i > 0 {
-				p := repeater(prev, i)
-				sb.WriteString(p)
-			} else {
-				r := sb.String()
-				r = r[0 : len(r)-1]
+		if unicode.IsDigit(v) {
+			if v == '0' {
 				sb.Reset()
-				sb.WriteString(r)
+				par = par[:len(par)-1]
+				sb.WriteString(string(par))
+			} else {
+				repeat := strings.Repeat(string(par[len(par)-1]), int(v)-'0'-1)
+				par = append(par, []rune(repeat)...)
+				sb.WriteString(repeat)
 			}
-		}
-		if !unicode.IsDigit(v) {
-			prev = v
-			if v != 10 {
-				sb.WriteString(string(v))
-			}
+		} else {
+			par = append(par, v)
+			sb.WriteString(string(v))
 		}
 	}
 	return sb.String(), nil
