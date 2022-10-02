@@ -16,11 +16,10 @@ func TestUnpack(t *testing.T) {
 		{input: "abccd", expected: "abccd"},
 		{input: "", expected: ""},
 		{input: "aaa0b", expected: "aab"},
-		// uncomment if task with asterisk completed
-		// {input: `qwe\4\5`, expected: `qwe45`},
-		// {input: `qwe\45`, expected: `qwe44444`},
-		// {input: `qwe\\5`, expected: `qwe\\\\\`},
-		// {input: `qwe\\\3`, expected: `qwe\3`},
+		{input: "d\n5abc", expected: "d\n\n\n\n\nabc"},
+		{input: "훈5민정0음", expected: "훈훈훈훈훈민음"},
+		{input: "八0曰0隸0書0漢0興0有0草0書1", expected: "書"},
+		{input: "Пр0и0в0е0т0М0иР!", expected: "ПиР!"},
 	}
 
 	for _, tc := range tests {
