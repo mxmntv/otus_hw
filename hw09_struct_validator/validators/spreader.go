@@ -5,10 +5,9 @@ import (
 	"strconv"
 )
 
-func RuleSpreader(values []interface{}, r map[string]interface{}, n string) error {
+func RuleSpreader(v []interface{}, r map[string]interface{}, n string) error { //nolint:gocognit
 	var ves ValidationErrors
-	var ve ValidationError
-	for _, val := range values {
+	for _, val := range v {
 		for k, v := range r {
 			switch k {
 			case "len":
@@ -16,8 +15,9 @@ func RuleSpreader(values []interface{}, r map[string]interface{}, n string) erro
 				i, _ := strconv.ParseInt(v, 10, 64)
 				err := lenValidator(val, i, n)
 				if err != nil {
-					if errors.As(err, &ve) {
-						ves = append(ves, err.(ValidationError))
+					var _ve ValidationError
+					if errors.As(err, &_ve) {
+						ves = append(ves, _ve)
 					} else {
 						return err
 					}
@@ -26,8 +26,9 @@ func RuleSpreader(values []interface{}, r map[string]interface{}, n string) erro
 				v, _ := v.(string)
 				err := regexpValidator(val, v, n)
 				if err != nil {
-					if errors.As(err, &ve) {
-						ves = append(ves, err.(ValidationError))
+					var _ve ValidationError
+					if errors.As(err, &_ve) {
+						ves = append(ves, _ve)
 					} else {
 						return err
 					}
@@ -36,8 +37,9 @@ func RuleSpreader(values []interface{}, r map[string]interface{}, n string) erro
 				v, _ := v.(string)
 				err := inValidator(val, v, n)
 				if err != nil {
-					if errors.As(err, &ve) {
-						ves = append(ves, err.(ValidationError))
+					var _ve ValidationError
+					if errors.As(err, &_ve) {
+						ves = append(ves, _ve)
 					} else {
 						return err
 					}
@@ -46,8 +48,9 @@ func RuleSpreader(values []interface{}, r map[string]interface{}, n string) erro
 				i, _ := strconv.ParseInt(v.(string), 10, 64)
 				err := maxValidator(val, i, n)
 				if err != nil {
-					if errors.As(err, &ve) {
-						ves = append(ves, err.(ValidationError))
+					var _ve ValidationError
+					if errors.As(err, &_ve) {
+						ves = append(ves, _ve)
 					} else {
 						return err
 					}
@@ -56,8 +59,9 @@ func RuleSpreader(values []interface{}, r map[string]interface{}, n string) erro
 				i, _ := strconv.ParseInt(v.(string), 10, 64)
 				err := minValidator(val, i, n)
 				if err != nil {
-					if errors.As(err, &ve) {
-						ves = append(ves, err.(ValidationError))
+					var _ve ValidationError
+					if errors.As(err, &_ve) {
+						ves = append(ves, _ve)
 					} else {
 						return err
 					}

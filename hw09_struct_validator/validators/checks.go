@@ -46,19 +46,15 @@ func inValidator(v interface{}, rd string, name string) error {
 	rds := strings.Split(rd, ",")
 	for _, r := range rds {
 		rule, err := strconv.Atoi(r)
-		if err == nil {
-			val, ok := v.(int64)
-			if ok {
-				if val == int64(rule) {
-					return nil
-				}
+		if err != nil {
+			val, ok := v.(string)
+			if ok && val == r {
+				return nil
 			}
 		} else {
-			val, ok := v.(string)
-			if ok {
-				if val == r {
-					return nil
-				}
+			val, ok := v.(int64)
+			if ok && val == int64(rule) {
+				return nil
 			}
 		}
 	}
@@ -73,7 +69,7 @@ func maxValidator(v interface{}, rd int64, name string) error {
 	if !ok {
 		return errors.Wrap(ErrUnsupportedRule, "this rule does not apply to this type")
 	}
-	if int64(value) > rd {
+	if value > rd {
 		return ValidationError{
 			Field: name,
 			Err:   fmt.Errorf("field value %d is less than %d", value, rd),
@@ -87,7 +83,7 @@ func minValidator(v interface{}, rd int64, name string) error {
 	if !ok {
 		return errors.Wrap(ErrUnsupportedRule, "this rule does not apply to this type")
 	}
-	if int64(value) < rd {
+	if value < rd {
 		return ValidationError{
 			Field: name,
 			Err:   fmt.Errorf("field value %d is less than %d", value, rd),
