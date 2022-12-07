@@ -2,12 +2,12 @@ package utils
 
 import "strings"
 
-func RuleSlicer(r string) map[string]interface{} {
-	res := make(map[string]interface{})
-	s := strings.Split(r, "|")
-	for _, v := range s {
-		m := strings.Split(v, ":")
-		res[m[0]] = m[1]
+func RuleSlicer(rules string) map[string]interface{} {
+	ruleslist := make(map[string]interface{})
+	parts := strings.Split(rules, "|")
+	for _, p := range parts {
+		r := strings.Split(p, ":")
+		ruleslist[r[0]] = r[1]
 	}
-	return res
+	return ruleslist
 }

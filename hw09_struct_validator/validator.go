@@ -18,47 +18,47 @@ func Validate(i interface{}) error {
 			fmt.Sprintf("validation of this type (%s) is not possible", s.Kind()))
 	}
 
-	var valerrs validators.ValidationErrors
+	var validationerrs validators.ValidationErrors
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
 		validate, ok := field.Tag.Lookup("validate")
 		if ok && validate != "" {
 			err := Converter(validate, s.FieldByName(field.Name), field.Name)
 			if err != nil {
-				var vaes validators.ValidationErrors
-				if errors.As(err, &vaes) {
-					valerrs = append(valerrs, vaes...)
+				var validationerr validators.ValidationErrors
+				if errors.As(err, &validationerr) {
+					validationerrs = append(validationerrs, validationerr...)
 				} else {
 					return err
 				}
 			}
 		}
 	}
-	if len(valerrs) > 0 {
-		return valerrs
+	if len(validationerrs) > 0 {
+		return validationerrs
 	}
 	return nil
 }
 
-func Converter(rule string, v reflect.Value, name string) error {
-	switch v.Kind() { //nolint:exhaustive
+func Converter(rules string, value reflect.Value, name string) error {
+	switch value.Kind() { //nolint:exhaustive
 	case reflect.Int:
-		i := make([]interface{}, 1)
-		i[0] = v.Int()
-		r := utils.RuleSlicer(rule)
-		return validators.RuleSpreader(i, r, name)
+		val := make([]interface{}, 1)
+		val[0] = value.Int()
+		rule := utils.RuleSlicer(rules)
+		return validators.RuleSpreader(val, rule, name)
 	case reflect.String:
-		s := make([]interface{}, 1)
-		s[0] = v.String()
-		r := utils.RuleSlicer(rule)
-		return validators.RuleSpreader(s, r, name)
+		val := make([]interface{}, 1)
+		val[0] = value.String()
+		rule := utils.RuleSlicer(rules)
+		return validators.RuleSpreader(val, rule, name)
 	case reflect.Slice:
-		sl := make([]interface{}, v.Len())
-		for i := 0; i < v.Len(); i++ {
-			sl[i] = v.Index(i).Interface()
+		val := make([]interface{}, value.Len())
+		for i := 0; i < value.Len(); i++ {
+			val[i] = value.Index(i).Interface()
 		}
-		r := utils.RuleSlicer(rule)
-		return validators.RuleSpreader(sl, r, name)
+		rule := utils.RuleSlicer(rules)
+		return validators.RuleSpreader(val, rule, name)
 	}
 	return nil
 }

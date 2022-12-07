@@ -5,63 +5,57 @@ import (
 	"strconv"
 )
 
-func RuleSpreader(v []interface{}, r map[string]interface{}, n string) error { //nolint:gocognit
-	var ves ValidationErrors
-	for _, val := range v {
-		for k, v := range r {
-			switch k {
+func RuleSpreader(value []interface{}, rules map[string]interface{}, name string) error { //nolint:gocognit
+	var validationerrs ValidationErrors
+	for _, val := range value {
+		for specname, spec := range rules {
+			switch specname {
 			case "len":
-				v, _ := v.(string)
-				i, _ := strconv.ParseInt(v, 10, 64)
-				err := lenValidator(val, i, n)
-				if err != nil {
-					var _ve ValidationError
-					if errors.As(err, &_ve) {
-						ves = append(ves, _ve)
+				rulevalue, _ := strconv.ParseInt(spec.(string), 10, 64)
+				if err := lenValidator(val, rulevalue, name); err != nil {
+					var validationerr ValidationError
+					if errors.As(err, &validationerr) {
+						validationerrs = append(validationerrs, validationerr)
 					} else {
 						return err
 					}
 				}
 			case "regexp":
-				v, _ := v.(string)
-				err := regexpValidator(val, v, n)
-				if err != nil {
-					var _ve ValidationError
-					if errors.As(err, &_ve) {
-						ves = append(ves, _ve)
+				rulevalue := spec.(string)
+				if err := regexpValidator(val, rulevalue, name); err != nil {
+					var validationerr ValidationError
+					if errors.As(err, &validationerr) {
+						validationerrs = append(validationerrs, validationerr)
 					} else {
 						return err
 					}
 				}
 			case "in":
-				v, _ := v.(string)
-				err := inValidator(val, v, n)
-				if err != nil {
-					var _ve ValidationError
-					if errors.As(err, &_ve) {
-						ves = append(ves, _ve)
+				rulevalue := spec.(string)
+				if err := inValidator(val, rulevalue, name); err != nil {
+					var validationerr ValidationError
+					if errors.As(err, &validationerr) {
+						validationerrs = append(validationerrs, validationerr)
 					} else {
 						return err
 					}
 				}
 			case "max":
-				i, _ := strconv.ParseInt(v.(string), 10, 64)
-				err := maxValidator(val, i, n)
-				if err != nil {
-					var _ve ValidationError
-					if errors.As(err, &_ve) {
-						ves = append(ves, _ve)
+				rulevalue, _ := strconv.ParseInt(spec.(string), 10, 64)
+				if err := maxValidator(val, rulevalue, name); err != nil {
+					var validationerr ValidationError
+					if errors.As(err, &validationerr) {
+						validationerrs = append(validationerrs, validationerr)
 					} else {
 						return err
 					}
 				}
 			case "min":
-				i, _ := strconv.ParseInt(v.(string), 10, 64)
-				err := minValidator(val, i, n)
-				if err != nil {
-					var _ve ValidationError
-					if errors.As(err, &_ve) {
-						ves = append(ves, _ve)
+				rulevalue, _ := strconv.ParseInt(spec.(string), 10, 64)
+				if err := minValidator(val, rulevalue, name); err != nil {
+					var validationerr ValidationError
+					if errors.As(err, &validationerr) {
+						validationerrs = append(validationerrs, validationerr)
 					} else {
 						return err
 					}
@@ -69,8 +63,8 @@ func RuleSpreader(v []interface{}, r map[string]interface{}, n string) error { /
 			}
 		}
 	}
-	if len(ves) > 0 {
-		return ves
+	if len(validationerrs) > 0 {
+		return validationerrs
 	}
 	return nil
 }
