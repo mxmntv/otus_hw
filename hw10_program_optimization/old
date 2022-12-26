@@ -1,0 +1,6 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/mxmntv/otus_hw/hw10_program_optimization
+BenchmarkGetDomainStat-10    	       3	 381188125 ns/op
+PASS
+ok  	github.com/mxmntv/otus_hw/hw10_program_optimization	2.960s
