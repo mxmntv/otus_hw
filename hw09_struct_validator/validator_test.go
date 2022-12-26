@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"testing"
+
+	"github.com/pkg/errors"
+	"github.com/stretchr/testify/require"
 )
 
 type UserRole string
@@ -11,7 +14,7 @@ type UserRole string
 // Test the function on different structures and other types.
 type (
 	User struct {
-		ID     string `json:"id" validate:"len:36"`
+		ID     string `json:"id" validate:"len:10"`
 		Name   string
 		Age    int      `validate:"min:18|max:50"`
 		Email  string   `validate:"regexp:^\\w+@\\w+\\.\\w+$"`
@@ -42,10 +45,41 @@ func TestValidate(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			// Place your code here.
+			in: Response{
+				Code: 200,
+				Body: "{}",
+			},
+			expectedErr: nil,
 		},
-		// ...
-		// Place your code here.
+		{
+			in: App{
+				Version: "0.0.1",
+			},
+			expectedErr: nil,
+		},
+		{
+			in: Token{
+				Header:    []byte{1, 2, 3},
+				Payload:   []byte{3, 2, 1},
+				Signature: []byte{2, 2, 2},
+			},
+			expectedErr: nil,
+		},
+		{
+			in: User{
+				ID:    "0123456789",
+				Name:  "Vasya",
+				Age:   22,
+				Email: "example@example.com",
+				Role:  "admin",
+				Phones: []string{
+					"11111111111",
+					"22222222222",
+				},
+				meta: json.RawMessage("{}"),
+			},
+			expectedErr: nil,
+		},
 	}
 
 	for i, tt := range tests {
@@ -53,7 +87,9 @@ func TestValidate(t *testing.T) {
 			tt := tt
 			t.Parallel()
 
-			// Place your code here.
+			e := Validate(tt.in)
+
+			require.True(t, errors.Is(e, tt.expectedErr))
 			_ = tt
 		})
 	}
