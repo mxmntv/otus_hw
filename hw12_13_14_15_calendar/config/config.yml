@@ -1,0 +1,14 @@
+app:
+  name: 'event-calendar'
+  version: '1.0.0'
+  apiVersion: '1'
+  storage: 'memory'
+
+http:
+  host: 'localhost'
+  port: 8080
+
+logger:
+  logLevel: 'debug'
+
+postgres:
